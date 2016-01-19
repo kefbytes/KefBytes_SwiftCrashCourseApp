@@ -62,6 +62,12 @@ class AccountsTableViewController: UITableViewController, NSFetchedResultsContro
         cell.accountNameLabel.text = account.accountName
         cell.accountUsernameLabel.text = account.username
         cell.accountPasswordLabel.text = account.password
+        if indexPath.row % 2 == 0 {
+            cell.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
+        } else {
+            cell.backgroundColor = UIColor.whiteColor()
+        }
+        
         return cell
     }
     
