@@ -1,0 +1,22 @@
+PODS:
+  - KefKeychain (1.0.0)
+  - SwiftyJSON (2.3.2)
+
+DEPENDENCIES:
+  - KefKeychain (~> 1.0.0)
+  - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON.git`)
+
+EXTERNAL SOURCES:
+  SwiftyJSON:
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
+
+CHECKOUT OPTIONS:
+  SwiftyJSON:
+    :commit: 929539eb6a3304eaa9153ca44041a78b85bf2ee5
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
+
+SPEC CHECKSUMS:
+  KefKeychain: 883ef46b1de9b1b0bdb177485099bbb491e86a62
+  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
+
+COCOAPODS: 0.39.0
