@@ -113,14 +113,14 @@
 			isa = PBXGroup;
 			children = (
 				1EF458411C4DA19E00FABD97 /* AppDelegate.swift */,
+				1EF4586A1C4DA4C400FABD97 /* LoginViewController.swift */,
+				1EF4586C1C4DA52200FABD97 /* LoginViewModel.swift */,
 				1EF458701C4DA55600FABD97 /* AccountsTableViewController.swift */,
 				1EF458711C4DA55600FABD97 /* AccountTableViewCell.swift */,
 				1EF458721C4DA55600FABD97 /* AddEditViewController.swift */,
 				1EF458731C4DA55600FABD97 /* AddEditViewModel.swift */,
 				1EF458681C4DA4A100FABD97 /* PersistenceController.swift */,
 				1EF458471C4DA19E00FABD97 /* Main.storyboard */,
-				1EF4586A1C4DA4C400FABD97 /* LoginViewController.swift */,
-				1EF4586C1C4DA52200FABD97 /* LoginViewModel.swift */,
 				1EF4586E1C4DA53600FABD97 /* Constants.swift */,
 				1EF4584D1C4DA19E00FABD97 /* Assets.xcassets */,
 				1EF4584F1C4DA19E00FABD97 /* LaunchScreen.storyboard */,

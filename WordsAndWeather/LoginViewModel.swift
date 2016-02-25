@@ -20,6 +20,7 @@ class LoginViewModel {
     static var weatherDescription:String?
     static var currentTemp:Int?
     
+    // MARK: - Login functions
     static func createLogin(userID:String, password:String) -> Bool {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setValue(userID, forKey: Constants.userID)
@@ -69,22 +70,22 @@ class LoginViewModel {
     
     static func getWeather(whenDone: (String) -> Void) {
         
-        let url = NSURL(string: "http://api.openweathermap.org/data/2.5/weather?q=charlotte&APPID=b4babdf7c4fc57ccb46e80d1bbf8d6cb")
-        let session = NSURLSession.sharedSession()
-        let dataTask = session.dataTaskWithURL(url!, completionHandler: { (data: NSData?, response:NSURLResponse?,
-            error: NSError?) -> Void in
-            let json = JSON(data: data!)
-            self.parseWeatherJSON(json) {
-                returnedValue -> Void in
-                print(returnedValue)
-                // Calling whenDone within the NSURLSession thread causes issue, need to put on main thread so can update UI
-                dispatch_async(dispatch_get_main_queue(), {
-                    whenDone("Weather Retrieved")
-                })
-            }
-            
-        })
-        dataTask.resume()
+//        let url = NSURL(string: "http://api.openweathermap.org/data/2.5/weather?q=charlotte&APPID=b4babdf7c4fc57ccb46e80d1bbf8d6cb")
+//        let session = NSURLSession.sharedSession()
+//        let dataTask = session.dataTaskWithURL(url!, completionHandler: { (data: NSData?, response:NSURLResponse?,
+//            error: NSError?) -> Void in
+//            let json = JSON(data: data!)
+//            self.parseWeatherJSON(json) {
+//                returnedValue -> Void in
+//                print(returnedValue)
+//                // Calling whenDone within the NSURLSession thread causes issue, need to put on main thread so can update UI
+//                dispatch_async(dispatch_get_main_queue(), {
+//                    whenDone("Weather Retrieved")
+//                })
+//            }
+//            
+//        })
+//        dataTask.resume()
     }
     
     static func parseWeatherJSON(json: JSON, doneParsing: (String) -> Void) {

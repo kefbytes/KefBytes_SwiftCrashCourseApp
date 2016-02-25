@@ -70,10 +70,6 @@ class LoginViewController: UIViewController {
             object: nil)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     override func viewWillAppear(animated: Bool) {
         createdLogin = false
         LoginViewModel.getWeather() {
