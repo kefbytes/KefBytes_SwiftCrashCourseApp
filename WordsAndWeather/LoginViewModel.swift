@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import KefKeychain
 import LocalAuthentication
 import SwiftyJSON
 
@@ -25,21 +24,20 @@ class LoginViewModel {
         let defaults = UserDefaults.standard
         defaults.setValue(userID, forKey: Constants.userID)
         defaults.set(true, forKey: Constants.userIDExists)
-        return KeychainWrapper.set(Constants.appPassword, value: password)
+        KeychainService.savePassword(token: password)
     }
     
     static func deleteLogin() -> Bool {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: Constants.userID)
         defaults.set(false, forKey: Constants.userIDExists)
-        return KeychainWrapper.delete(Constants.appPassword)
+//        return KeychainWrapper.delete(Constants.appPassword)
     }
     
     static func loginWithUsernamePassword(_ username:String, password:String) -> Bool {
         let defaults = UserDefaults.standard
         let savedUsername = defaults.object(forKey: Constants.userID) as? String
-        let savedPassword = KeychainWrapper.get(Constants.appPassword)  as? String
-        
+        let savedPassword = KeychainService.loadPassword()        
         if username.lowercased() == savedUsername!.lowercased() && password == savedPassword {
             return true
         }
