@@ -25,7 +25,7 @@ class AccountsTableViewController: UITableViewController, NSFetchedResultsContro
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         self.tableView.reloadData()
         
         do {
@@ -37,14 +37,14 @@ class AccountsTableViewController: UITableViewController, NSFetchedResultsContro
     }
     
     // MARK: - Table view data source
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         if let sections = fetchedResultsController.sections {
             return sections.count
         }
         return 0
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let sections = fetchedResultsController.sections {
             let currentSection = sections[section]
             return currentSection.numberOfObjects
@@ -52,29 +52,29 @@ class AccountsTableViewController: UITableViewController, NSFetchedResultsContro
         return 0
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         return configureCell(atIndexPath: indexPath)
     }
     
-    func configureCell(atIndexPath indexPath: NSIndexPath)  -> AccountTableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("accountCell", forIndexPath: indexPath) as! AccountTableViewCell
-        let account = fetchedResultsController.objectAtIndexPath(indexPath) as! Account
+    func configureCell(atIndexPath indexPath: IndexPath)  -> AccountTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "accountCell", for: indexPath) as! AccountTableViewCell
+        let account = fetchedResultsController.object(at: indexPath) as! Account
         cell.accountNameLabel.text = account.accountName
         cell.accountUsernameLabel.text = account.username
         cell.accountPasswordLabel.text = account.password
         if indexPath.row % 2 == 0 {
             cell.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
         } else {
-            cell.backgroundColor = UIColor.whiteColor()
+            cell.backgroundColor = UIColor.white
         }
         
         return cell
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
-            let account = fetchedResultsController.objectAtIndexPath(indexPath) as? Account
-            mainContext?.deleteObject(account!)
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
+            let account = fetchedResultsController.object(at: indexPath) as? Account
+            mainContext?.delete(account!)
             persistenceController!.saveContext({
                 (response, error) -> Void in
             })
@@ -82,8 +82,8 @@ class AccountsTableViewController: UITableViewController, NSFetchedResultsContro
     }
     
     // MARK: - Core Data
-    lazy var fetchedResultsController: NSFetchedResultsController = {
-        let accountsFetchRequest = NSFetchRequest(entityName: "Account")
+    lazy var fetchedResultsController: NSFetchedResultsController = { () -> <<error type>> in 
+        let accountsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Account")
         let primarySortDescriptor = NSSortDescriptor(key: "accountName", ascending: true, selector: "caseInsensitiveCompare:")
         accountsFetchRequest.sortDescriptors = [primarySortDescriptor]
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: accountsFetchRequest, managedObjectContext: self.mainContext!, sectionNameKeyPath: nil, cacheName: nil)
@@ -91,37 +91,37 @@ class AccountsTableViewController: UITableViewController, NSFetchedResultsContro
         return fetchedResultsController
     }()
     
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         switch type {
-        case .Insert:
+        case .insert:
             if let newIndexPath = newIndexPath {
-                tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Fade)
+                tableView.insertRows(at: [newIndexPath], with: .fade)
             }
-        case .Delete:
+        case .delete:
             if let indexPath = indexPath {
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                tableView.deleteRows(at: [indexPath], with: .fade)
             }
-        case .Update:
+        case .update:
             if let indexPath = indexPath {
-                tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+                tableView.reloadRows(at: [indexPath], with: .none)
             }
-        case .Move:
-            if let indexPath = indexPath, let newIndexPath = newIndexPath where indexPath != newIndexPath {
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-                tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Fade)
+        case .move:
+            if let indexPath = indexPath, let newIndexPath = newIndexPath, indexPath != newIndexPath {
+                tableView.deleteRows(at: [indexPath], with: .fade)
+                tableView.insertRows(at: [newIndexPath], with: .fade)
             }
         }
     }
     
     
     // MARK: - Navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let addEditViewController = segue.destinationViewController as! AddEditViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let addEditViewController = segue.destination as! AddEditViewController
         addEditViewController.persistenceController = self.persistenceController
         if segue.identifier == Constants.editAccountSegue {
             let indexPath = self.tableView.indexPathForSelectedRow
-            addEditViewController.account = fetchedResultsController.objectAtIndexPath(indexPath!) as? Account
+            addEditViewController.account = fetchedResultsController.object(at: indexPath!) as? Account
             addEditViewController.saveActionType = false
         } else if segue.identifier == Constants.addAccountSegue {
             addEditViewController.saveActionType = true

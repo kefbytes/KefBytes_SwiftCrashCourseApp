@@ -45,32 +45,32 @@ class LoginViewController: UIViewController {
             mainContext = persistenceController.mainMoc
         }
         
-        let defaults = NSUserDefaults.standardUserDefaults()
-        if let userLoginExists = defaults.objectForKey(Constants.userIDExists) as! Bool? {
+        let defaults = UserDefaults.standard
+        if let userLoginExists = defaults.object(forKey: Constants.userIDExists) as! Bool? {
             loginExists = userLoginExists
             if loginExists {
-                loginButton.setTitle("Login", forState: UIControlState.Normal)
-                loginButton.enabled = false
-                deleteButton.hidden = false
+                loginButton.setTitle("Login", for: UIControlState())
+                loginButton.isEnabled = false
+                deleteButton.isHidden = false
             } else {
-                loginButton.setTitle("Create Login", forState: UIControlState.Normal)
-                loginButton.enabled = false
-                deleteButton.hidden = true
+                loginButton.setTitle("Create Login", for: UIControlState())
+                loginButton.isEnabled = false
+                deleteButton.isHidden = true
             }
         } else {
-            loginButton.setTitle("Create Login", forState: UIControlState.Normal)
-            loginButton.enabled = false
-            deleteButton.hidden = true
+            loginButton.setTitle("Create Login", for: UIControlState())
+            loginButton.isEnabled = false
+            deleteButton.isHidden = true
         }
         
-        NSNotificationCenter.defaultCenter().addObserver(
+        NotificationCenter.default.addObserver(
             self,
-            selector: "textFieldHasChanged",
-            name: UITextFieldTextDidChangeNotification,
+            selector: #selector(LoginViewController.textFieldHasChanged),
+            name: NSNotification.Name.UITextFieldTextDidChange,
             object: nil)
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         createdLogin = false
         LoginViewModel.getWeather() {
             returnedValue -> Void in
@@ -95,7 +95,7 @@ class LoginViewController: UIViewController {
     }
     
     // MARK: - Actions
-    @IBAction func loginAction(sender: AnyObject) {
+    @IBAction func loginAction(_ sender: AnyObject) {
         attemptManualLogin = true
         if loginExists {
             guard LoginViewModel.loginWithUsernamePassword(usernameTextField.text!, password: passwordTextField.text!) else {
@@ -109,41 +109,41 @@ class LoginViewController: UIViewController {
                 // TODO: Handle failure here
                 return
             }
-            loginButton.setTitle("Login", forState: UIControlState.Normal)
-            deleteButton.hidden = false
+            loginButton.setTitle("Login", for: UIControlState())
+            deleteButton.isHidden = false
             loginExists = true
             createdLogin = true
         }
     }
     
-    @IBAction func deleteLoginAction(sender: AnyObject) {
+    @IBAction func deleteLoginAction(_ sender: AnyObject) {
         guard LoginViewModel.deleteLogin() else {
             print("failed to delete login")
             // TODO: Handle failure here
             return
         }
-        deleteButton.hidden = true
+        deleteButton.isHidden = true
         usernameTextField.text = ""
         passwordTextField.text = ""
-        loginButton.setTitle("Create Login", forState: UIControlState.Normal)
-        loginButton.enabled = false
+        loginButton.setTitle("Create Login", for: UIControlState())
+        loginButton.isEnabled = false
         loginExists = false
     }
     
-    @IBAction func useTouchIDAction(sender: AnyObject) {
+    @IBAction func useTouchIDAction(_ sender: AnyObject) {
         attemptTouchIDLogin = true
         LoginViewModel.loginWithTouchID() {
             returnedValue -> Void in
             self.loginSuccessful = returnedValue.isSuccessful
             self.touchIDAvailable = returnedValue.isTouchIDAvailable
             if self.loginSuccessful {
-                self.performSegueWithIdentifier(Constants.accountsTableSegue, sender: self)
+                self.performSegue(withIdentifier: Constants.accountsTableSegue, sender: self)
             }
         }
     }
     
     // MARK: - TextField Delegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         let nextTag=textField.tag+1;
         let nextResponder=textField.superview?.viewWithTag(nextTag) as UIResponder!
@@ -161,9 +161,9 @@ class LoginViewController: UIViewController {
     
     func textFieldHasChanged() {
         if usernameTextField.text!.characters.count > 0 && passwordTextField.text!.characters.count > 0 {
-            loginButton.enabled = true
+            loginButton.isEnabled = true
         } else {
-            loginButton.enabled = false
+            loginButton.isEnabled = false
         }
     }
     
@@ -174,13 +174,13 @@ class LoginViewController: UIViewController {
     
     // MARK: - Navigation
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let navigationController = segue.destinationViewController as! UINavigationController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as! UINavigationController
         let accountsTableViewController = navigationController.topViewController as! AccountsTableViewController
         accountsTableViewController.persistenceController = self.persistenceController
     }
     
-    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject!) -> Bool {
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any!) -> Bool {
         if identifier == "accountsTableSegue" {
             if loginSuccessful {
                 return true
@@ -195,10 +195,10 @@ class LoginViewController: UIViewController {
     }
     
     // MARK: - AlertView
-    func showAlertController(message: String) {
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .Alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        presentViewController(alertController, animated: true, completion: nil)
+    func showAlertController(_ message: String) {
+        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alertController, animated: true, completion: nil)
     }
     
     

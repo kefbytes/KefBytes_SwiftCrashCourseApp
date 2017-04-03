@@ -8,63 +8,63 @@
 
 import Foundation
 
-public class KeychainWrapper {
+open class KeychainWrapper {
     
-    public class func set(key: String, value: String) -> Bool {
-        if let data = value.dataUsingEncoding(NSUTF8StringEncoding)
+    open class func set(_ key: String, value: String) -> Bool {
+        if let data = value.data(using: String.Encoding.utf8)
         {
             return set(key, value: data)
         }
         return false
     }
     
-    public class func set(key: String, value: NSData) -> Bool {
+    open class func set(_ key: String, value: Data) -> Bool {
         let keyQuery = [
             (kSecClass as String)       : kSecClassGenericPassword,
             (kSecAttrAccount as String) : key,
             (kSecValueData as String)   : value
-        ]
-        SecItemDelete(keyQuery as CFDictionaryRef)
-        return SecItemAdd(keyQuery as CFDictionaryRef, nil) == noErr
+        ] as [String : Any]
+        SecItemDelete(keyQuery as CFDictionary)
+        return SecItemAdd(keyQuery as CFDictionary, nil) == noErr
     }
     
-    public class func get(key: String) -> NSString? {
+    open class func get(_ key: String) -> NSString? {
         if let data = getData(key)
         {
-            return NSString(data: data, encoding: NSUTF8StringEncoding)
+            return NSString(data: data, encoding: String.Encoding.utf8.rawValue)
         }
         return nil
     }
     
-    public class func getData(key: String) -> NSData? {
+    open class func getData(_ key: String) -> Data? {
         let keyQuery = [
             (kSecClass as String)       : kSecClassGenericPassword,
             (kSecAttrAccount as String) : key,
             (kSecReturnData as String)  : kCFBooleanTrue,
             (kSecMatchLimit as String)  : kSecMatchLimitOne
-        ]
+        ] as [String : Any]
         var dataTypeRef: Unmanaged<AnyObject>?
-        let status: OSStatus = withUnsafeMutablePointer(&dataTypeRef) { SecItemCopyMatching(keyQuery as CFDictionaryRef, UnsafeMutablePointer($0)) }
+        let status: OSStatus = withUnsafeMutablePointer(to: &dataTypeRef) { SecItemCopyMatching(keyQuery as CFDictionary, UnsafeMutablePointer($0)) }
         
         if status == noErr && dataTypeRef != nil
         {
-            return dataTypeRef!.takeRetainedValue() as? NSData
+            return dataTypeRef!.takeRetainedValue() as? Data
         }
         return nil
     }
     
-    public class func delete(key: String) -> Bool {
+    open class func delete(_ key: String) -> Bool {
         let query = [
             (kSecClass as String)       : kSecClassGenericPassword,
             (kSecAttrAccount as String) : key
-        ]
-        return SecItemDelete(query as CFDictionaryRef) == noErr
+        ] as [String : Any]
+        return SecItemDelete(query as CFDictionary) == noErr
     }
     
-    public class func clear() -> Bool {
+    open class func clear() -> Bool {
         let keyQuery = [
             (kSecClass as String): kSecClassGenericPassword
         ]
-        return SecItemDelete(keyQuery as CFDictionaryRef) == noErr
+        return SecItemDelete(keyQuery as CFDictionary) == noErr
     }
 }

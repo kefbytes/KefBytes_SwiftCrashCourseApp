@@ -21,54 +21,54 @@ class LoginViewModel {
     static var currentTemp:Int?
     
     // MARK: - Login functions
-    static func createLogin(userID:String, password:String) -> Bool {
-        let defaults = NSUserDefaults.standardUserDefaults()
+    static func createLogin(_ userID:String, password:String) -> Bool {
+        let defaults = UserDefaults.standard
         defaults.setValue(userID, forKey: Constants.userID)
-        defaults.setBool(true, forKey: Constants.userIDExists)
+        defaults.set(true, forKey: Constants.userIDExists)
         return KeychainWrapper.set(Constants.appPassword, value: password)
     }
     
     static func deleteLogin() -> Bool {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.removeObjectForKey(Constants.userID)
-        defaults.setBool(false, forKey: Constants.userIDExists)
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: Constants.userID)
+        defaults.set(false, forKey: Constants.userIDExists)
         return KeychainWrapper.delete(Constants.appPassword)
     }
     
-    static func loginWithUsernamePassword(username:String, password:String) -> Bool {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        let savedUsername = defaults.objectForKey(Constants.userID) as? String
+    static func loginWithUsernamePassword(_ username:String, password:String) -> Bool {
+        let defaults = UserDefaults.standard
+        let savedUsername = defaults.object(forKey: Constants.userID) as? String
         let savedPassword = KeychainWrapper.get(Constants.appPassword)  as? String
         
-        if username.lowercaseString == savedUsername!.lowercaseString && password == savedPassword {
+        if username.lowercased() == savedUsername!.lowercased() && password == savedPassword {
             return true
         }
         return false
     }
     
-    static func loginWithTouchID(callBack:(isSuccessful:Bool, isTouchIDAvailable:Bool) -> Void) {
+    static func loginWithTouchID(_ callBack:@escaping (_ isSuccessful:Bool, _ isTouchIDAvailable:Bool) -> Void) {
         let context = LAContext()
         var error: NSError?
         
-        if context.canEvaluatePolicy(.DeviceOwnerAuthenticationWithBiometrics, error: &error) {
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
             let reason = Constants.authenticateWithTouchID
-            context.evaluatePolicy(.DeviceOwnerAuthenticationWithBiometrics, localizedReason: reason, reply:
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason, reply:
                 {(success: Bool, error: NSError?) in
                     if success {
-                        callBack(isSuccessful: true, isTouchIDAvailable: true)
+                        callBack(true, true)
                         print("touchId Login Successful")
                     } else {
-                        callBack(isSuccessful: false, isTouchIDAvailable: true)
+                        callBack(false, true)
                     }
-            })
+            } as! (Bool, Error?) -> Void)
         } else {
-            callBack(isSuccessful: false, isTouchIDAvailable: false)
+            callBack(false, false)
         }
     }
     
     // MARK: - Weather
     
-    static func getWeather(whenDone: (String) -> Void) {
+    static func getWeather(_ whenDone: (String) -> Void) {
         
 //        let url = NSURL(string: "http://api.openweathermap.org/data/2.5/weather?q=charlotte&APPID=b4babdf7c4fc57ccb46e80d1bbf8d6cb")
 //        let session = NSURLSession.sharedSession()
@@ -88,7 +88,7 @@ class LoginViewModel {
 //        dataTask.resume()
     }
     
-    static func parseWeatherJSON(json: JSON, doneParsing: (String) -> Void) {
+    static func parseWeatherJSON(_ json: JSON, doneParsing: (String) -> Void) {
         print("Parsing in process")
         let tempInKelvin = json["main"]["temp"].doubleValue
         self.currentTemp = Int(round(convertKelvin(tempInKelvin)))
@@ -100,7 +100,7 @@ class LoginViewModel {
         doneParsing("Parsing Completed")
     }
     
-    static func convertKelvin(kelvinTemp:Double) -> Double {
+    static func convertKelvin(_ kelvinTemp:Double) -> Double {
         return kelvinTemp * 9/5 - 459.67
     }
     

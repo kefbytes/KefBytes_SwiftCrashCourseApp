@@ -15,10 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     /* Create an instance of PersistenceController which has a private setter (so that it is only created by us and an internal(default value) getter. */
-    private(set) var persistenceController: PersistenceController? = nil
+    fileprivate(set) var persistenceController: PersistenceController? = nil
     
     
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         /* We are creating the persistenceController with a trailing closure which acts like a callback block allowing us to wait until completion before completing any setup */
         persistenceController = PersistenceController(){

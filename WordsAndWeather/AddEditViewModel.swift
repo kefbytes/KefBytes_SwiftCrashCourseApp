@@ -11,11 +11,11 @@ import CoreData
 
 class AddEditViewModel {
     
-    static func saveAccount(mainContext:NSManagedObjectContext?, coreDataController:PersistenceController?, accountName:String, userName:String, password:String) {
+    static func saveAccount(_ mainContext:NSManagedObjectContext?, coreDataController:PersistenceController?, accountName:String, userName:String, password:String) {
         if let mainContext = mainContext {
             /* We use our mainContext to instantiate the managedObject, as we make changes to the mo they will be saved in the mainContext */
-            let entityDescription = NSEntityDescription.entityForName("Account", inManagedObjectContext: mainContext)
-            let account = Account(entity: entityDescription!, insertIntoManagedObjectContext: mainContext)
+            let entityDescription = NSEntityDescription.entity(forEntityName: "Account", in: mainContext)
+            let account = Account(entity: entityDescription!, insertInto: mainContext)
             account.accountName = accountName
             account.username = userName
             account.password = password
@@ -25,7 +25,7 @@ class AddEditViewModel {
                     (response, error) -> Void in
                     let fetchRequest = NSFetchRequest(entityName:"Account")
                     do {
-                        if let _ = try mainContext.executeFetchRequest(fetchRequest) as? [Account] {
+                        if let _ = try mainContext.fetch(fetchRequest) as? [Account] {
                             print("save completed:\(response)")
                         }
                     } catch {
@@ -36,12 +36,12 @@ class AddEditViewModel {
         }
     }
     
-    static func updateAccount(mainContext:NSManagedObjectContext?, coreDataController:PersistenceController?, accountName:String, userName:String, password:String) {
-        let fetchRequest = NSFetchRequest(entityName: "Account")
+    static func updateAccount(_ mainContext:NSManagedObjectContext?, coreDataController:PersistenceController?, accountName:String, userName:String, password:String) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Account")
         let accountnamePredicate = NSPredicate(format: "accountName == %@", accountName)
         fetchRequest.predicate = accountnamePredicate
         do {
-            let accounts = try mainContext!.executeFetchRequest(fetchRequest) as? [Account]
+            let accounts = try mainContext!.fetch(fetchRequest) as? [Account]
             let account = accounts![0]
             account.username = userName
             account.password = password

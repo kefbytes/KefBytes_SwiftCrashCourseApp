@@ -35,7 +35,7 @@ class AddEditViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let _ = account {
             hydrateTextFields()
@@ -48,7 +48,7 @@ class AddEditViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - Actions
-    @IBAction func saveAccountAction(sender: AnyObject) {
+    @IBAction func saveAccountAction(_ sender: AnyObject) {
         
         let accountName = accountNameTextField.text!
         let accountUsername = accountUsernameTextField.text!
@@ -64,7 +64,7 @@ class AddEditViewController: UIViewController, UITextFieldDelegate {
         accountUsernameTextField.text = ""
         accountPasswordTextField.text = ""
         dismissKeyboard()
-        navigationController?.popViewControllerAnimated(true)
+        navigationController?.popViewController(animated: true)
         
     }
     
@@ -76,7 +76,7 @@ class AddEditViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - TextField Delegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         let nextTag=textField.tag+1;
         let nextResponder=textField.superview?.viewWithTag(nextTag) as UIResponder!
