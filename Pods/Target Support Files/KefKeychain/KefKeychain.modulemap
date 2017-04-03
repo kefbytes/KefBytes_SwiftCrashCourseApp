@@ -1,6 +1,0 @@
-framework module KefKeychain {
-  umbrella header "KefKeychain-umbrella.h"
-
-  export *
-  module * { export * }
-}
